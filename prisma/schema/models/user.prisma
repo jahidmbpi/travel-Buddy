@@ -9,10 +9,10 @@ model User {
   email String @unique 
   password String 
   role Role @default(TOURIST)
-  bio  String
-  profilePhoto String
+  bio  String?
+  profilePhoto String?
   isDeleted Boolean @default(false)
-  status UserStatus
+  status UserStatus @default(ACTIVE)
   credentials String[]
  language String[]
 
