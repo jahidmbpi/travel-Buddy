@@ -20,6 +20,11 @@ const createUser = async (req: Request) => {
   return withOutPassword;
 };
 
+const getAllUser = async () => {
+  const result = await prisma.user.findMany();
+  return result;
+};
 export const userServices = {
   createUser,
+  getAllUser,
 };
