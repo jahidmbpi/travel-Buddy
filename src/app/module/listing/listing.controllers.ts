@@ -3,6 +3,8 @@ import catchAsync from "../../sheard/catchAsync";
 import sendResponse from "../../sheard/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { listingServices } from "./listing.services";
+import pick from "../../sheard/pick";
+import { filterableField, searchAbleField } from "./listing.constant";
 
 const createListing = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
@@ -18,7 +20,15 @@ const createListing = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getAllListing = catchAsync(async (req: Request, res: Response) => {
-  const result = await listingServices.getAllLising();
+  const filter = pick(req.query, filterableField);
+  const option = pick(req.query, [
+    "page",
+    "limit",
+    "skip",
+    "sortBy",
+    "sortOrder",
+  ]);
+  const result = await listingServices.getAllLising(filter, option);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.CREATED,

@@ -15,6 +15,13 @@ router.post(
   cheakAuth(Role.GUIDE),
   listingContorller.createListing
 );
+
+router.get(
+  "/getALlListing",
+  cheakAuth(Role.TOURIST),
+  listingContorller.getAllListing
+);
+
 router.patch(
   "/:id",
   validateRequest(updateListingSchema),

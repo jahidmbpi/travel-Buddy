@@ -1,8 +1,11 @@
-import { Listing, Role } from "@prisma/client";
+import { Listing, Prisma, Role } from "@prisma/client";
 import { JwtPayload } from "jsonwebtoken";
 import { prisma } from "../../config/prisma";
 import AppError from "../../helper/appError";
 import { StatusCodes } from "http-status-codes";
+import { IPagination } from "../../interface/interface";
+import calculatatePagination from "../../sheard/calculatePagination";
+import { searchAbleField } from "./listing.constant";
 
 const createListing = async (
   user: JwtPayload,
@@ -28,9 +31,55 @@ const createListing = async (
   return result;
 };
 
-const getAllLising = async () => {
-  const result = await prisma.listing.findMany();
-  return result;
+const getAllLising = async (filter: any, option: IPagination) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    calculatatePagination(option);
+  console.log(page, limit, skip, sortBy, sortOrder);
+  const { searchTarm, ...filterData } = filter;
+  console.log(searchTarm);
+
+  const andConditon: Prisma.ListingWhereInput[] = [];
+  if (searchTarm) {
+    andConditon.push({
+      OR: searchAbleField.map((field) => ({
+        [field]: {
+          contains: searchTarm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+  if (Object.keys(filterData).length > 0) {
+    const filterCondition = Object.keys(filterData).map((key) => ({
+      [key]: {
+        equals: (filterData as any)[key],
+      },
+    }));
+    andConditon.push(...filterCondition);
+  }
+
+  const whereCondition: Prisma.ListingWhereInput =
+    andConditon.length > 0 ? { AND: andConditon } : {};
+  const result = await prisma.listing.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
+
+  const total = await prisma.listing.count({
+    where: whereCondition,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 const UpdateListing = async (

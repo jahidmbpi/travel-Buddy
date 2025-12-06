@@ -1,0 +1,7 @@
+export type IPagination = {
+  limit?: number;
+  page?: number;
+  skip?: number;
+  sortBy?: string | undefined;
+  sortOrder?: string | undefined;
+};
