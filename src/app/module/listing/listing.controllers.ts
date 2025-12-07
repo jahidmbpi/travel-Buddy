@@ -41,7 +41,7 @@ const UpdateListing = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const listingId = req.params.id;
   const user = req.user;
-  // const files = req.files as Express.Multer.File[];
+
   const result = await listingServices.UpdateListing(payload, listingId, user);
   sendResponse(res, {
     success: true,

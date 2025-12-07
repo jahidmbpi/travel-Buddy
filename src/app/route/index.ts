@@ -3,6 +3,7 @@ import { userRouter } from "../module/user/user.route";
 import { authRouter } from "../module/auth/auth.route";
 import { guaidRouter } from "../module/guaid/guaid.route";
 import { listingRouter } from "../module/listing/losting.route";
+import { bookingRouter } from "../module/booking/booking.route";
 
 const router = Router();
 const moduleRoutes = [
@@ -21,6 +22,10 @@ const moduleRoutes = [
   {
     path: "/listing",
     route: listingRouter,
+  },
+  {
+    path: "/booking",
+    route: bookingRouter,
   },
 ];
 
