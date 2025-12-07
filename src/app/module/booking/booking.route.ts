@@ -17,4 +17,6 @@ router.get(
 );
 router.get("/mybooking", cheakAuth(Role.GUIDE), bookingController.myBooking);
 
+router.patch("/id", cheakAuth(Role.GUIDE), bookingController.confrimBooking);
+
 export const bookingRouter = router;

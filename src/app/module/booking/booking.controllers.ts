@@ -41,8 +41,19 @@ const myBooking = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const confrimBooking = catchAsync(async (req: Request, res: Response) => {
+  const bookingId = req.params.id;
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "booking confrimed success",
+    data: "",
+  });
+});
+
 export const bookingController = {
   createBooking,
   getALlbooking,
   myBooking,
+  confrimBooking,
 };

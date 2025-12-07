@@ -106,8 +106,51 @@ const myBooking = async (id: string, option: IPagination) => {
   };
 };
 
+const confrimBooking = async (
+  bookingId: string,
+  payload: {
+    status: "CENCELLED" | "CONFRIMED";
+  }
+) => {
+  const isExistBooking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+  });
+
+  if (!isExistBooking) {
+    throw new AppError(StatusCodes.NOT_FOUND, "Booking not found");
+  }
+  if (
+    isExistBooking.status === BookingStatus.CENCELLED &&
+    payload.status === "CENCELLED"
+  ) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "This booking is already canceled"
+    );
+  }
+  if (
+    isExistBooking.status === BookingStatus.CONFRIMED &&
+    payload.status === "CONFRIMED"
+  ) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "This booking is already confirmed"
+    );
+  }
+  const updateBooking = await prisma.booking.update({
+    where: {
+      id: bookingId,
+    },
+    data: {
+      status: payload.status as BookingStatus,
+    },
+  });
+  return updateBooking;
+};
+
 export const bookingServices = {
   createBooking,
   getAllBooking,
   myBooking,
+  confrimBooking,
 };
