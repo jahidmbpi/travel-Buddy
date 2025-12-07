@@ -4,6 +4,8 @@ import { prisma } from "../../config/prisma";
 import AppError from "../../helper/appError";
 import { StatusCodes } from "http-status-codes";
 import { ICreateBooking } from "./booking.interface";
+import { IPagination } from "../../interface/interface";
+import calculatatePagination from "../../sheard/calculatePagination";
 
 const createBooking = async (
   payload: ICreateBooking,
@@ -57,6 +59,26 @@ const createBooking = async (
   return createBooking;
 };
 
+const getAllBooking = async (option: IPagination) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    calculatatePagination(option);
+
+  const result = await prisma.booking.findMany({
+    take: limit,
+    skip,
+  });
+  const total = await prisma.booking.count();
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const bookingServices = {
   createBooking,
+  getAllBooking,
 };

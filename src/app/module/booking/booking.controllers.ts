@@ -3,6 +3,7 @@ import catchAsync from "../../sheard/catchAsync";
 import sendResponse from "../../sheard/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { bookingServices } from "./booking.services";
+import pick from "../../sheard/pick";
 
 const createBooking = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -17,6 +18,17 @@ const createBooking = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getALlbooking = catchAsync(async (req: Request, res: Response) => {
+  const option = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+  const result = await bookingServices.getAllBooking(option);
+  sendResponse(res, {
+    success: true,
+    message: "booking create succsess",
+    statusCode: StatusCodes.CREATED,
+    data: result,
+  });
+});
 export const bookingController = {
   createBooking,
+  getALlbooking,
 };
